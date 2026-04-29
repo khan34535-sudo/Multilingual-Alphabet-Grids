@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="fr">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>French Alphabet Sound Grid</title>
+  <style>
+    /* --- NAVIGATION BAR STYLING --- */
+    .nav-bar {
+      text-align: center; 
+      padding: 15px; 
+      background-color: #1a1a1a; 
+      border-bottom: 2px solid #333;
+      width: 100%;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .nav-bar a {
+      margin: 0 20px; 
+      text-decoration: none; 
+      font-weight: bold; 
+      color: #FF6B6B; 
+      font-family: sans-serif;
+      font-size: 1.2rem;
+    }
+    .nav-bar a:hover {
+      color: #ffffff;
+      text-decoration: underline;
+    }
+
+    body {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', cursive, sans-serif;
+      background: #000000 !important;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start; /* Changed to flex-start for navbar */
+      overflow-y: auto;
+    }
+
+    html {
+      height: 100%;
+      width: 100%;
+    }
+
+    .container {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    h1 {
+      color: #ffffff;
+      font-size: 4em;
+      margin: 20px 0 10px 0;
+      text-align: center;
+      font-weight: 900;
+      text-transform: uppercase;
+      line-height: 1;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 15px;
+      width: 90%;
+      max-width: 1000px;
+      margin: 20px auto;
+    }
+
+    .letter-box {
+      aspect-ratio: 1;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.5em;
+      font-weight: 900;
+      color: #ffffff;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      user-select: none;
+    }
+
+    .letter-box:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 12px rgba(255, 255, 255, 0.2);
+    }
+
+    .speaking {
+      animation: pulse 0.6s ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.15); box-shadow: 0 0 40px rgba(255, 255, 255, 0.9); }
+    }
+
+    .subtitle {
+      color: #ffffff;
+      font-size: 1.8em;
+      margin-bottom: 20px;
+      text-align: center;
+      opacity: 0.85;
+    }
+
+    @media (max-width: 768px) {
+      .grid { grid-template-columns: repeat(4, 1fr); }
+      h1 { font-size: 3em; }
+    }
+  </style>
+ </head>
+ <body>
+
+  <div class="nav-bar">
+      <a href="index.html">English</a>
+      <a href="arabic.html">Arabic</a>
+      <a href="french.html" style="color: #ffffff; border-bottom: 2px solid white;">French</a>
+  </div>
+
+  <div class="container">
+   <h1 id="title">FRENCH ALPHABET</h1>
+   <div class="subtitle">Click any letter to hear its sound</div>
+   <div class="grid" id="letterGrid"></div>
+  </div>
+
+  <script>
+    const colors = [
+      '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
+      '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B500', '#FF69B4',
+      '#7FDBFF', '#FFB6C1', '#00CED1', '#FFD700', '#FF1493',
+      '#1ABC9C', '#E74C3C', '#3498DB', '#9B59B6', '#F39C12',
+      '#2ECC71', '#E67E22', '#16A085', '#C0392B', '#8E44AD',
+      '#27AE60', '#D35400', '#34495E', '#95A5A6', '#7F8C8D',
+      '#BDC3C7', '#2C3E50'
+    ];
+
+    const alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'É', 'È', 'Ê', 'À', 'Ù', 'Ç'];
+
+    function createGrid() {
+      const grid = document.getElementById('letterGrid');
+      alphabet.forEach((letter, index) => {
+        const box = document.createElement('div');
+        box.className = 'letter-box';
+        box.textContent = letter;
+        box.style.background = colors[index % colors.length];
+        box.addEventListener('click', () => speakLetter(letter, box));
+        grid.appendChild(box);
+      });
+    }
+
+    function speakLetter(letter, element) {
+      element.classList.add('speaking');
+      setTimeout(() => element.classList.remove('speaking'), 600);
+      
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        
+        const frenchPhoneticSounds = {
+          'A': 'ah', 'B': 'bé', 'C': 'cé', 'D': 'dé', 'E': 'euh', 'F': 'eff', 
+          'G': 'jé', 'H': 'ash', 'I': 'ee', 'J': 'ji', 'K': 'ka', 'L': 'ell', 
+          'M': 'emm', 'N': 'enn', 'O': 'oh', 'P': 'pé', 'Q': 'ku', 'R': 'err', 
+          'S': 'ess', 'T': 'té', 'U': 'eu', 'V': 'vé', 'W': 'double vé', 
+          'X': 'iks', 'Y': 'i grec', 'Z': 'zed', 'É': 'ay', 'È': 'eh', 
+          'Ê': 'eh', 'À': 'ah', 'Ù': 'eu', 'Ç': 'ss'
+        };
+        
+        const utterance = new SpeechSynthesisUtterance();
+        utterance.text = `Letter ${letter}, ${frenchPhoneticSounds[letter]}`;
+        utterance.lang = 'fr-FR';
+        utterance.rate = 0.8;
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    createGrid();
+  </script>
+ </body>
+</html>
